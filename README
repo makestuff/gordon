@@ -1,0 +1,12 @@
+GORDON FLASH PROGRAMMER
+
+This is a rough command-line application to program FPGA flash chips. At the
+moment it only handles the iCEblink40's SPI-flash, connected to the onboard AVR.
+Eventually I'd like to make this more generic, dealing with direct and indirect
+connections to the flash (indirect using the spi-talk & spi-master designs).
+Also, since all the hard work for maintaining a database of flash chips and
+associated programming algorithms has already been done by the flashrom project
+(http://www.flashrom.org), it makes sense to re-use some of that work at a
+future date, hence the choice of a flashrom-compatible license (GPLv2).
+
+Chris McClelland 2013-11-01
