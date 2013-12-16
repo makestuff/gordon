@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 ROOT    := $(realpath ../..)
-DEPS    := fpgalink error argtable2 dump
+DEPS    := fpgalink argtable2
 TYPE    := exe
 SUBDIRS :=
 
