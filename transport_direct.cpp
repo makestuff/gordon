@@ -37,16 +37,16 @@ TransportDirect::~TransportDirect() {
 }
 
 void TransportDirect::sendMessage(
-	const uint8 *cmdData, size_t cmdLength,
-	uint8 *recvBuf, size_t recvLength) const
+	const uint8 *cmdData, uint32 cmdLength,
+	uint8 *recvBuf, uint32 recvLength) const
 {
 	const char *error = 0;
 	FLStatus fStatus = flSingleBitPortAccess(m_handle, m_ssPort, m_ssBit, PIN_LOW, NULL, &error);
 	checkThrow(fStatus, error);
-	fStatus = spiSend(m_handle, cmdData, (uint32)cmdLength, SPI_MSBFIRST, &error);
+	fStatus = spiSend(m_handle, cmdLength, cmdData, SPI_MSBFIRST, &error);
 	checkThrow(fStatus, error);
 	if ( recvLength ) {
-		fStatus = spiRecv(m_handle, recvBuf, (uint32)recvLength, SPI_MSBFIRST, &error);
+		fStatus = spiRecv(m_handle, recvLength, recvBuf, SPI_MSBFIRST, &error);
 		checkThrow(fStatus, error);
 	}
 	fStatus = flSingleBitPortAccess(m_handle, m_ssPort, m_ssBit, PIN_HIGH, NULL, &error);

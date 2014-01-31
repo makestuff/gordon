@@ -30,8 +30,8 @@ public:
 	TransportDirect(FLContext *handle, const char *portConfig);
 	virtual ~TransportDirect();
 	void sendMessage(
-		const uint8 *cmdData, size_t cmdLength = 1,
-		uint8 *recvBuf = 0, size_t recvLength = 0
+		const uint8 *cmdData, uint32 cmdLength = 1,
+		uint8 *recvBuf = 0, uint32 recvLength = 0
 	) const;
 };
 

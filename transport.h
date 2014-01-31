@@ -37,8 +37,8 @@ public:
 
 	// Public API: send some bytes to the flash, and read some bytes back.
 	virtual void sendMessage(
-		const uint8 *cmdData, size_t cmdLength = 1,
-		uint8 *recvBuf = 0, size_t recvLength = 0
+		const uint8 *cmdData, uint32 cmdLength = 1,
+		uint8 *recvBuf = 0, uint32 recvLength = 0
 	) const = 0;
 	static void checkThrow(FLStatus status, const char *error);
 };

@@ -42,13 +42,13 @@ TransportIndirect::TransportIndirect(FLContext *handle, const char *conduitStr) 
 }
 
 void TransportIndirect::sendMessage(
-	const uint8 *cmdData, size_t cmdLength,
-	uint8 *recvBuf, size_t recvLength) const
+	const uint8 *cmdData, uint32 cmdLength,
+	uint8 *recvBuf, uint32 recvLength) const
 {
 	const char *error = 0;
 	FLStatus fStatus = flWriteChannel(m_handle, 1, 1, &selectSuppress, &error);
 	checkThrow(fStatus, error);
-	fStatus = flWriteChannel(m_handle, 0, (uint32)cmdLength, cmdData, &error);
+	fStatus = flWriteChannel(m_handle, 0, cmdLength, cmdData, &error);
 	checkThrow(fStatus, error);
 	if ( recvLength ) {
 		fStatus = flWriteChannel(m_handle, 1, 1, &selectNoSuppress, &error);
@@ -61,9 +61,9 @@ void TransportIndirect::sendMessage(
 			recvLength -= 1024;
 			recvBuf += 1024;
 		}
-		fStatus = flWriteChannel(m_handle, 0, (uint32)recvLength, recvBuf, &error);
+		fStatus = flWriteChannel(m_handle, 0, recvLength, recvBuf, &error);
 		checkThrow(fStatus, error);
-		fStatus = flReadChannel(m_handle, 0, (uint32)recvLength, recvBuf, &error);
+		fStatus = flReadChannel(m_handle, 0, recvLength, recvBuf, &error);
 		checkThrow(fStatus, error);
 	}
 	fStatus = flWriteChannel(m_handle, 1, sizeof(deSelect), deSelect, &error);

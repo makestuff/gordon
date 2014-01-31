@@ -42,10 +42,11 @@ int main(int argc, char *argv[]) {
 	struct arg_str *txOpt = arg_str0("t", "transport", "<spec>", "   specify the flash communication mechanism");
 	struct arg_str *writeOpt = arg_str0("w", "write", "<f:a>", "      write file f to address a");
 	struct arg_str *readOpt = arg_str0("r", "read", "<f:a:l>", " read l bytes into file f from address a");
+	struct arg_lit *swapOpt = arg_lit0("s", "swap", "                bit-swap the flash data read or written");
 	struct arg_lit *bootOpt = arg_lit0("b", "boot", "                start the AVR bootloader");
 	struct arg_lit *helpOpt  = arg_lit0("h", "help", "                print this help and exit\n");
 	struct arg_end *endOpt   = arg_end(20);
-	void *argTable[] = {vpOpt, txOpt, writeOpt, readOpt, bootOpt, helpOpt, endOpt};
+	void *argTable[] = {vpOpt, txOpt, writeOpt, readOpt, swapOpt, bootOpt, helpOpt, endOpt};
 	const char *const progName = "gordon";
 	try {
 		int numErrors;
@@ -124,6 +125,9 @@ int main(int argc, char *argv[]) {
 			uint8 *buffer = new uint8[length];
 			ArrayJanitor<uint8> bufJan(buffer);
 			prog.read(address, length, buffer);
+			if ( swapOpt->count ) {
+				spiBitSwap(length, buffer);
+			}
 			FILE *file = fopen(fileName.c_str(), "wb");
 			if ( !file ) {
 				throw GordonException("Unable to open file for writing.");
@@ -154,10 +158,13 @@ int main(int argc, char *argv[]) {
 				throw GordonException("Invalid argument to option -w|--write=<f:a>.");
 			}
 			ptr++;
-			uint32 length;
+			size_t length;
 			uint8 *file = flLoadFile(fileName.c_str(), &length);
 			if ( !file ) {
 				throw GordonException("Unable to read from file.");
+			}
+			if ( swapOpt->count ) {
+				spiBitSwap(length, file);
 			}
 			LoadFileJanitor fileJan(file);
 			prog.write(address, length, file);
