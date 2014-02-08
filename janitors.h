@@ -35,8 +35,8 @@ public:
 
 template<typename T> class ArrayJanitor {
 	const T *const m_ptr;
-	ArrayJanitor<T> &operator=(const Janitor<T> &other);
 	ArrayJanitor(const Janitor<T> &other);
+	ArrayJanitor<T> &operator=(const ArrayJanitor<T> &other);
 public:
 	explicit ArrayJanitor(const T *ptr) : m_ptr(ptr) { }
 	~ArrayJanitor() { delete []m_ptr; }

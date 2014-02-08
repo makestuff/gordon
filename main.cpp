@@ -164,10 +164,10 @@ int main(int argc, char *argv[]) {
 				throw GordonException("Unable to read from file.");
 			}
 			if ( swapOpt->count ) {
-				spiBitSwap(length, file);
+				spiBitSwap((uint32)length, file);
 			}
 			LoadFileJanitor fileJan(file);
-			prog.write(address, length, file);
+			prog.write(address, (uint32)length, file);
 		}
 		
 		// Put an FPGALink/AVR device in DFU mode ready for updating its firmware.
