@@ -137,6 +137,7 @@ static uint32 powerTwoSelector(const Transport *transport) {
 #define ST_ID 0x20
 #define AMIC_ID 0x7F37
 #define ATMEL_ID 0x1F
+#define WINBOND_NEX_ID 0xEF  /* Winbond (ex Nexcom) serial flashes */
 
 #define ST_M25P10 0x2011
 #define ST_M25P40 0x2013
@@ -144,6 +145,7 @@ static uint32 powerTwoSelector(const Transport *transport) {
 #define AMIC_A25L40PT 0x2013
 #define ATMEL_AT45DB041D 0x2400
 #define ATMEL_AT45DB161D 0x2600
+#define WINBOND_NEX_W25Q64_V 0x4017
 
 static const FlashChip flashChips[] = {
 	{
@@ -273,6 +275,21 @@ static const FlashChip flashChips[] = {
 		spiPageProgram82,
 		spiRead03,
 		NULL
+	}, {
+		"Winbond",
+		"W25Q64.V",
+		WINBOND_NEX_ID,
+		WINBOND_NEX_W25Q64_V,
+		8192,  // device size in KiB
+		256,  // page size in bytes
+		8,
+		{
+			{64 * 1024, 128}  // block size, num blocks
+		},
+		spiBlockEraseD8,
+		spiPageProgram02,
+		spiRead03,
+		nullSelector
 	}, {
 		NULL, NULL, 0, 0, 0, 0, 0, {{0, 0}}, NULL, NULL, NULL, NULL
 	}
