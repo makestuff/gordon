@@ -21,13 +21,7 @@
 
 const uint8 TransportIndirect::selectSuppress = (bmTURBO | bmSUPPRESS | bmFLASHCS);  // 0x07
 const uint8 TransportIndirect::selectNoSuppress = (bmTURBO | bmFLASHCS);             // 0x05
-const uint8 TransportIndirect::deSelect[] = {
-	(bmTURBO | bmSUPPRESS | bmFLASHCS), (bmTURBO | bmSUPPRESS | bmFLASHCS),
-	(bmTURBO | bmSUPPRESS | bmFLASHCS), (bmTURBO | bmSUPPRESS | bmFLASHCS),
-	(bmTURBO | bmSUPPRESS | bmFLASHCS), (bmTURBO | bmSUPPRESS | bmFLASHCS),
-	(bmTURBO | bmSUPPRESS | bmFLASHCS), (bmTURBO | bmSUPPRESS | bmFLASHCS),
-	bmTURBO
-};
+const uint8 TransportIndirect::deSelect = bmTURBO;
 
 TransportIndirect::TransportIndirect(FLContext *handle, const char *conduitStr) :
 	Transport(handle)
@@ -66,6 +60,6 @@ void TransportIndirect::sendMessage(
 		fStatus = flReadChannel(m_handle, 0, recvLength, recvBuf, &error);
 		checkThrow(fStatus, error);
 	}
-	fStatus = flWriteChannel(m_handle, 1, sizeof(deSelect), deSelect, &error);
+	fStatus = flWriteChannel(m_handle, 1, 1, &deSelect, &error);
 	checkThrow(fStatus, error);
 }

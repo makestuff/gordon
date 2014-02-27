@@ -34,7 +34,7 @@ class TransportIndirect : public Transport {
 	};
 	static const uint8 selectSuppress;
 	static const uint8 selectNoSuppress;
-	static const uint8 deSelect[];
+	static const uint8 deSelect;
 public:
 	TransportIndirect(FLContext *handle, const char *conduit);
 	void sendMessage(
