@@ -24,7 +24,7 @@ const uint8 TransportIndirect::selectNoSuppress = (bmTURBO | bmFLASHCS);        
 const uint8 TransportIndirect::deSelect = bmTURBO;
 
 TransportIndirect::TransportIndirect(FLContext *handle, const char *conduitStr) :
-	USBTransport(handle)
+	TransportUSB(handle)
 {
 	const uint8 conduitNum = (uint8)strtoul(conduitStr, NULL, 10);
 	if ( !conduitNum ) {

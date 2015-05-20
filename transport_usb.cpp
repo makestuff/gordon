@@ -14,24 +14,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
-#ifndef USB_TRANSPORT_H
-#define USB_TRANSPORT_H
-
-#include <transport.h>
 #include <libfpgalink.h>
+#include "exception.h"
+#include "transport_usb.h"
 
-// Base of all Transports based on FPGALink. This is implemented by DirectTransport
-// and IndirectTransport and their subclasses.
-//
-class USBTransport : public Transport {
-protected:
-	FLContext *const m_handle;
-public:
-	explicit USBTransport(FLContext *handle) : m_handle(handle) { }
-	virtual ~USBTransport() { }
-
-	// Check a return code and throw if necessary
-	static void checkThrow(FLStatus status, const char *error);
-};
-
-#endif
+void TransportUSB::checkThrow(FLStatus status, const char *error) {
+	if ( status ) {
+		throw GordonException(error, status, true);
+	}
+}

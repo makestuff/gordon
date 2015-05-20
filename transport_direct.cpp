@@ -18,7 +18,7 @@
 #include "transport_direct.h"
 
 TransportDirect::TransportDirect(FLContext *handle, const char *portConfig) :
-	USBTransport(handle)
+	TransportUSB(handle)
 {
 	const char *error = 0;
 	FLStatus fStatus = flSelectConduit(m_handle, 0, &error);
