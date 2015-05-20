@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
 		if ( arg_nullcheck(argTable) != 0 ) {
 			throw GordonException("Insufficient memory");
 		}
-		
+
 		numErrors = arg_parse(argc, argv, argTable);
 
 		if ( helpOpt->count > 0 ) {
@@ -70,12 +70,12 @@ int main(int argc, char *argv[]) {
 			arg_freetable(argTable, sizeof(argTable)/sizeof(argTable[0]));
 			return 0;
 		}
-		
+
 		if ( numErrors > 0 ) {
 			arg_print_errors(stderr, endOpt, progName);
 			throw GordonException("Try '%s --help' for more information.");
 		}
-		
+
 		fStatus = flInitialise(0, &error);
 		USBTransport::checkThrow(fStatus, error);
 		vp = vpOpt->sval[0];
@@ -169,7 +169,7 @@ int main(int argc, char *argv[]) {
 			LoadFileJanitor fileJan(file);
 			prog.write(address, (uint32)length, file);
 		}
-		
+
 		// Put an FPGALink/AVR device in DFU mode ready for updating its firmware.
 		if ( bootOpt->count ) {
 			fStatus = flBootloader(handle, &error);
