@@ -17,13 +17,13 @@
 #ifndef TRANSPORT_DIRECT_H
 #define TRANSPORT_DIRECT_H
 
-#include "transport.h"
+#include "usb_transport.h"
 
 // Programmer implementation using a microcontroller's SPI port. You can
 // customise the actual ports used for MISO, MOSI, SCLK and SS, but it assumes
 // the SPI is MSB-first though.
 //
-class TransportDirect : public Transport {
+class TransportDirect : public USBTransport {
 	uint8 m_ssPort;
 	uint8 m_ssBit;
 public:

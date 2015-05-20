@@ -16,9 +16,9 @@
  */
 #include <libfpgalink.h>
 #include "exception.h"
-#include "transport.h"
+#include "usb_transport.h"
 
-void Transport::checkThrow(FLStatus status, const char *error) {
+void USBTransport::checkThrow(FLStatus status, const char *error) {
 	if ( status ) {
 		throw GordonException(error, status, true);
 	}

@@ -14,23 +14,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
-#ifndef TRANSPORT_H
-#define TRANSPORT_H
+#ifndef USB_TRANSPORT_H
+#define USB_TRANSPORT_H
 
-#include <makestuff.h>
+#include <transport.h>
+#include <libfpgalink.h>
 
-// Interface implemented by all transport classes that want to talk to an SPI
-// flash chip.
+// Base of all Transports based on FPGALink. This is implemented by DirectTransport
+// and IndirectTransport and their subclasses.
 //
-class Transport {
+class USBTransport : public Transport {
+protected:
+	FLContext *const m_handle;
 public:
-	virtual ~Transport() { }
+	explicit USBTransport(FLContext *handle) : m_handle(handle) { }
+	virtual ~USBTransport() { }
 
-	// Public API: send some bytes to the flash, and read some bytes back.
-	virtual void sendMessage(
-		const uint8 *cmdData, uint32 cmdLength = 1,
-		uint8 *recvBuf = 0, uint32 recvLength = 0
-	) const = 0;
+	// Check a return code and throw if necessary
+	static void checkThrow(FLStatus status, const char *error);
 };
 
 #endif

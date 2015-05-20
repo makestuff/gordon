@@ -77,10 +77,10 @@ int main(int argc, char *argv[]) {
 		}
 		
 		fStatus = flInitialise(0, &error);
-		Transport::checkThrow(fStatus, error);
+		USBTransport::checkThrow(fStatus, error);
 		vp = vpOpt->sval[0];
 		fStatus = flOpen(vp, &handle, &error);
-		Transport::checkThrow(fStatus, error);
+		USBTransport::checkThrow(fStatus, error);
 		FLContextJanitor cxtJan(handle);
 
 		// If reading or writing a flash chip, a transport spec must be supplied.
@@ -173,7 +173,7 @@ int main(int argc, char *argv[]) {
 		// Put an FPGALink/AVR device in DFU mode ready for updating its firmware.
 		if ( bootOpt->count ) {
 			fStatus = flBootloader(handle, &error);
-			Transport::checkThrow(fStatus, error);
+			USBTransport::checkThrow(fStatus, error);
 		}
 	}
 	catch ( const GordonException &ex ) {

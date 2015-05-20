@@ -17,7 +17,7 @@
 #ifndef TRANSPORT_INDIRECT_H
 #define TRANSPORT_INDIRECT_H
 
-#include "transport.h"
+#include "usb_transport.h"
 
 // Transport implementation using an indirect (host->micro->FPGA->flash) link.
 // This requires that the FPGA has been programmed with the "spi-talk" design,
@@ -25,7 +25,7 @@
 // a regular FPGALink CommFPGA conduit. It assumes the flash to be accessed is
 // on the first of potentially many CS lines from the FPGA.
 //
-class TransportIndirect : public Transport {
+class TransportIndirect : public USBTransport {
 	enum {
 		bmTURBO    = (1<<0),
 		bmSUPPRESS = (1<<1),
