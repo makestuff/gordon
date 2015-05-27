@@ -14,12 +14,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
-#include <libfpgalink.h>
-#include "exception.h"
-#include "transport_usb.h"
+#ifndef USB_EXCEPTION_H
+#define USB_EXCEPTION_H
 
-void TransportUSB::checkThrow(FLStatus status, const char *error) {
-	if ( status ) {
-		throw GordonException(error, status, true);
-	}
-}
+#include "exception.h"
+
+// Exception class for entire application.
+//
+class USBException : public GordonException {
+public:
+	explicit USBException(const char *msg, int retVal = -1);
+	virtual ~USBException() throw() { }
+};
+
+#endif

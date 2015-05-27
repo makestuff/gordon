@@ -15,19 +15,12 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 #include <libfpgalink.h>
-#include <string>
-#include "exception.h"
+#include "usb_exception.h"
 
 using namespace std;
 
-GordonException::GordonException(const char *msg, int retVal, bool cleanup) :
-	m_msg(msg), m_retVal(retVal)
+USBException::USBException(const char *msg, int retVal) :
+	GordonException(msg, retVal)
 {
-	if ( cleanup ) {
-		flFreeError(msg);
-	}
+	flFreeError(msg);
 }
-
-GordonException::GordonException(const string &msg, int retVal) :
-	m_msg(msg), m_retVal(retVal)
-{ }

@@ -19,42 +19,28 @@
 #include <makestuff.h>
 #include <argtable2.h>
 #include "exception.h"
-#include "transport.h"
-#include "transport_direct.h"
-#include "transport_indirect.h"
-#include "transport_iceblink.h"
+#include "transport_pcie.h"
 #include "flash_chips.h"
 #include "region_programmer.h"
 #include "janitors.h"
+#include "util.h"
 
 using namespace std;
 
-bool startsWith(const char *s, const char *p) {
-	while ( *s && *p && *s == *p ) {
-		s++; p++;
-	}
-	return (*p == '\0');
-}
-
 int main(int argc, char *argv[]) {
 	int retVal = 0;
-	struct arg_str *vpOpt = arg_str1("v", "vp", "<VID:PID[:DID]>", " VID, PID and opt. dev ID (e.g 1D50:602B:0001)");
-	struct arg_str *txOpt = arg_str0("t", "transport", "<spec>", "   specify the flash communication mechanism");
-	struct arg_str *writeOpt = arg_str0("w", "write", "<f:a>", "        write file f to address a");
-	struct arg_str *readOpt = arg_str0("r", "read", "<f:a:l>", "       read l bytes into file f from address a");
-	struct arg_lit *swapOpt = arg_lit0("s", "swap", "               bit-swap the flash data read or written");
-	struct arg_lit *bootOpt = arg_lit0("b", "boot", "               start the AVR bootloader");
-	struct arg_lit *helpOpt  = arg_lit0("h", "help", "               print this help and exit\n");
+	struct arg_str *devOpt = arg_str0("d", "dev", "<devNode>", " device node (e.g /dev/fpgacam)");
+	struct arg_str *writeOpt = arg_str0("w", "write", "<f:a>", "   write file f to address a");
+	struct arg_str *readOpt = arg_str0("r", "read", "<f:a:l>", "  read l bytes into file f from address a");
+	struct arg_lit *swapOpt = arg_lit0("s", "swap", "          bit-swap the flash data read or written");
+	struct arg_lit *helpOpt  = arg_lit0("h", "help", "          print this help and exit\n");
 	struct arg_end *endOpt   = arg_end(20);
-	void *argTable[] = {vpOpt, txOpt, writeOpt, readOpt, swapOpt, bootOpt, helpOpt, endOpt};
+	void *argTable[] = {devOpt, writeOpt, readOpt, swapOpt, helpOpt, endOpt};
 	const char *const progName = "gordon";
 	try {
 		int numErrors;
-		FLStatus fStatus;
-		const char *error = NULL;
-		const char *vp = NULL;
+		const char *devNode = NULL;
 		Transport *transport = NULL;
-		struct FLContext *handle = NULL;
 
 		if ( arg_nullcheck(argTable) != 0 ) {
 			throw GordonException("Insufficient memory");
@@ -63,7 +49,7 @@ int main(int argc, char *argv[]) {
 		numErrors = arg_parse(argc, argv, argTable);
 
 		if ( helpOpt->count > 0 ) {
-			printf("Gordon Flash Tool Copyright (C) 2013-2014 Chris McClelland\n\nUsage: %s", progName);
+			printf("Gordon Flash Tool Copyright (C) 2013-2015 Chris McClelland\n\nUsage: %s", progName);
 			arg_print_syntax(stdout, argTable, "\n");
 			printf("\nProgram an FPGA configuration flash.\n\n");
 			arg_print_glossary(stdout, argTable,"  %-10s %s\n");
@@ -76,29 +62,9 @@ int main(int argc, char *argv[]) {
 			throw GordonException("Try '%s --help' for more information.");
 		}
 
-		fStatus = flInitialise(0, &error);
-		TransportUSB::checkThrow(fStatus, error);
-		vp = vpOpt->sval[0];
-		fStatus = flOpen(vp, &handle, &error);
-		TransportUSB::checkThrow(fStatus, error);
-		FLContextJanitor cxtJan(handle);
-
-		// If reading or writing a flash chip, a transport spec must be supplied.
-		if ( readOpt->count || writeOpt->count ) {
-			if ( txOpt->count == 0 ) {
-				throw GordonException("If you specify -r or -w then -t is required");
-			}
-			const char *txSpec = txOpt->sval[0];
-			if ( startsWith(txSpec, "direct:") ) {
-				transport = new TransportDirect(handle, txSpec + 7);
-			} else if ( startsWith(txSpec, "indirect:") ) {
-				transport = new TransportIndirect(handle, txSpec + 9);
-			} else if ( startsWith(txSpec, "iceblink") ) {
-				transport = new TransportIceBlink(handle);
-			} else {
-				throw GordonException("Invalid argument to option -t|--transport=<spec>.");
-			}
-		}
+		// Create transport
+		devNode = devOpt->sval[0];
+		transport = new TransportPCIE(devNode);
 		Janitor<Transport> txJan(transport);
 
 		// Read from flash.
@@ -126,7 +92,7 @@ int main(int argc, char *argv[]) {
 			ArrayJanitor<uint8> bufJan(buffer);
 			prog.read(address, length, buffer);
 			if ( swapOpt->count ) {
-				spiBitSwap(length, buffer);
+				bitSwap(length, buffer);
 			}
 			FILE *file = fopen(fileName.c_str(), "wb");
 			if ( !file ) {
@@ -159,21 +125,15 @@ int main(int argc, char *argv[]) {
 			}
 			ptr++;
 			size_t length;
-			uint8 *file = flLoadFile(fileName.c_str(), &length);
+			uint8 *file = loadFile(fileName.c_str(), &length);
 			if ( !file ) {
 				throw GordonException("Unable to read from file.");
 			}
 			if ( swapOpt->count ) {
-				spiBitSwap((uint32)length, file);
+				bitSwap((uint32)length, file);
 			}
-			LoadFileJanitor fileJan(file);
+			AllocJanitor fileJan(file);
 			prog.write(address, (uint32)length, file);
-		}
-
-		// Put an FPGALink/AVR device in DFU mode ready for updating its firmware.
-		if ( bootOpt->count ) {
-			fStatus = flBootloader(handle, &error);
-			TransportUSB::checkThrow(fStatus, error);
 		}
 	}
 	catch ( const GordonException &ex ) {
