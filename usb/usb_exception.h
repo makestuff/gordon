@@ -14,25 +14,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
-#ifndef TRANSPORT_DIRECT_H
-#define TRANSPORT_DIRECT_H
+#ifndef USB_EXCEPTION_H
+#define USB_EXCEPTION_H
 
-#include "transport.h"
+#include "exception.h"
 
-// Programmer implementation using a microcontroller's SPI port. You can
-// customise the actual ports used for MISO, MOSI, SCLK and SS, but it assumes
-// the SPI is MSB-first though.
+// Exception class for entire application.
 //
-class TransportDirect : public Transport {
-	uint8 m_ssPort;
-	uint8 m_ssBit;
+class USBException : public GordonException {
 public:
-	TransportDirect(FLContext *handle, const char *portConfig);
-	virtual ~TransportDirect();
-	void sendMessage(
-		const uint8 *cmdData, uint32 cmdLength = 1,
-		uint8 *recvBuf = 0, uint32 recvLength = 0
-	) const;
+	explicit USBException(const char *msg, int retVal = -1);
+	virtual ~USBException() throw() { }
 };
 
 #endif

@@ -29,13 +29,13 @@ TransportIceBlink::TransportIceBlink(FLContext *handle) :
 	//
 	const char *error = 0;
 	FLStatus fStatus = flMultiBitPortAccess(m_handle, "B6-,C2-,B0-", NULL, &error); // CRESET, POWER & SS low
-	Transport::checkThrow(fStatus, error);
+	checkThrow(fStatus, error);
 	flSleep(10);
 	fStatus = flSingleBitPortAccess(m_handle, 2, 2, PIN_HIGH, NULL, &error);  // POWER(C2) high
-	Transport::checkThrow(fStatus, error);
+	checkThrow(fStatus, error);
 	flSleep(10);
 	fStatus = flMultiBitPortAccess(m_handle, "B1-,B2-,B0+", NULL, &error); // SCK & MOSI low, SS high
-	Transport::checkThrow(fStatus, error);
+	checkThrow(fStatus, error);
 }
 
 TransportIceBlink::~TransportIceBlink() {

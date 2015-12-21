@@ -18,13 +18,13 @@
 #include "transport_direct.h"
 
 TransportDirect::TransportDirect(FLContext *handle, const char *portConfig) :
-	Transport(handle)
+	TransportUSB(handle)
 {
 	const char *error = 0;
 	FLStatus fStatus = flSelectConduit(m_handle, 0, &error);
-	Transport::checkThrow(fStatus, error);
+	checkThrow(fStatus, error);
 	fStatus = progOpen(m_handle, portConfig, &error);
-	Transport::checkThrow(fStatus, error);
+	checkThrow(fStatus, error);
 	m_ssPort = progGetPort(m_handle, LP_SS);
 	m_ssBit = progGetBit(m_handle, LP_SS);
 	fStatus = flSingleBitPortAccess(m_handle, m_ssPort, m_ssBit, PIN_HIGH, NULL, &error);

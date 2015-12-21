@@ -32,7 +32,7 @@ class GordonException : public std::exception {
 public:
 	// Public API: construct from a char* message which may need cleanup, or from
 	// a std::string message which will not.
-	explicit GordonException(const char *msg, int retVal = -1, bool cleanup = false);
+	explicit GordonException(const char *msg, int retVal = -1);
 	explicit GordonException(const std::string &msg, int retVal = -1);
 	virtual ~GordonException() throw() { }
 

@@ -18,21 +18,12 @@
 #define TRANSPORT_H
 
 #include <makestuff.h>
-#include <libfpgalink.h>
 
-// This describes the contract to be implemented by all connections to an SPI
-// flash chip. It basically accepts an FPGALink context and provides a pure
-// virtual sendMessage() function for talking to the chip. This is implemented
-// by DirectTransport and IndirectTransport and their subclasses.
+// Interface implemented by all transport classes that want to talk to an SPI
+// flash chip.
 //
 class Transport {
-	// Disallow copy-ctor and assignment.
-	Transport(const Transport &other);
-	Transport &operator=(const Transport &other);
-protected:
-	FLContext *const m_handle;
 public:
-	explicit Transport(FLContext *handle) : m_handle(handle) { }
 	virtual ~Transport() { }
 
 	// Public API: send some bytes to the flash, and read some bytes back.
@@ -40,7 +31,6 @@ public:
 		const uint8 *cmdData, uint32 cmdLength = 1,
 		uint8 *recvBuf = 0, uint32 recvLength = 0
 	) const = 0;
-	static void checkThrow(FLStatus status, const char *error);
 };
 
 #endif

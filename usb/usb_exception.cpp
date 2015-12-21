@@ -15,11 +15,12 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 #include <libfpgalink.h>
-#include "exception.h"
-#include "transport.h"
+#include "usb_exception.h"
 
-void Transport::checkThrow(FLStatus status, const char *error) {
-	if ( status ) {
-		throw GordonException(error, status, true);
-	}
+using namespace std;
+
+USBException::USBException(const char *msg, int retVal) :
+	GordonException(msg, retVal)
+{
+	flFreeError(msg);
 }

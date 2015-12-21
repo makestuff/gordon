@@ -14,29 +14,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
-#ifndef TRANSPORT_INDIRECT_H
-#define TRANSPORT_INDIRECT_H
+#ifndef TRANSPORT_DIRECT_H
+#define TRANSPORT_DIRECT_H
 
-#include "transport.h"
+#include "transport_usb.h"
 
-// Transport implementation using an indirect (host->micro->FPGA->flash) link.
-// This requires that the FPGA has been programmed with the "spi-talk" design,
-// which provides an indirect interface to the SPI flash via the FPGA, using
-// a regular FPGALink CommFPGA conduit. It assumes the flash to be accessed is
-// on the first of potentially many CS lines from the FPGA.
+// Programmer implementation using a microcontroller's SPI port. You can
+// customise the actual ports used for MISO, MOSI, SCLK and SS, but it assumes
+// the SPI is MSB-first though.
 //
-class TransportIndirect : public Transport {
-	enum {
-		bmTURBO    = (1<<0),
-		bmSUPPRESS = (1<<1),
-		bmFLASHCS  = (1<<2),
-		bmSDCARDCS = (1<<3)
-	};
-	static const uint8 selectSuppress;
-	static const uint8 selectNoSuppress;
-	static const uint8 deSelect;
+class TransportDirect : public TransportUSB {
+	uint8 m_ssPort;
+	uint8 m_ssBit;
 public:
-	TransportIndirect(FLContext *handle, const char *conduit);
+	TransportDirect(FLContext *handle, const char *portConfig);
+	virtual ~TransportDirect();
 	void sendMessage(
 		const uint8 *cmdData, uint32 cmdLength = 1,
 		uint8 *recvBuf = 0, uint32 recvLength = 0

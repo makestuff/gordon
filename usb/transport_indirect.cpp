@@ -24,7 +24,7 @@ const uint8 TransportIndirect::selectNoSuppress = (bmTURBO | bmFLASHCS);        
 const uint8 TransportIndirect::deSelect = bmTURBO;
 
 TransportIndirect::TransportIndirect(FLContext *handle, const char *conduitStr) :
-	Transport(handle)
+	TransportUSB(handle)
 {
 	const uint8 conduitNum = (uint8)strtoul(conduitStr, NULL, 10);
 	if ( !conduitNum ) {
@@ -32,7 +32,7 @@ TransportIndirect::TransportIndirect(FLContext *handle, const char *conduitStr) 
 	}
 	const char *error = 0;
 	FLStatus fStatus = flSelectConduit(m_handle, conduitNum, &error);
-	Transport::checkThrow(fStatus, error);
+	checkThrow(fStatus, error);
 }
 
 void TransportIndirect::sendMessage(

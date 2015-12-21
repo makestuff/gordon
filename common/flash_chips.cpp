@@ -141,6 +141,7 @@ static uint32 powerTwoSelector(const Transport *transport) {
 
 #define ST_M25P10 0x2011
 #define ST_M25P40 0x2013
+#define ST_N25Q128 0xBA18
 #define AMIC_A25L05PT 0x2020
 #define AMIC_A25L40PT 0x2013
 #define ATMEL_AT45DB041D 0x2400
@@ -216,11 +217,26 @@ static const FlashChip flashChips[] = {
 		spiRead03,
 		nullSelector
 	}, {
+		"Micron/Numonyx/ST",
+		"N25Q128",
+		ST_ID,
+		ST_N25Q128,
+		16384,  // device size in KiB
+		256,    // page size in bytes
+		8,
+		{
+			{64 * 1024, 256}  // block size, num blocks
+		},
+		spiBlockEraseD8,
+		spiPageProgram02,
+		spiRead03,
+		nullSelector
+	}, {
 		"Atmel",
 		"AT45DB041D",
 		ATMEL_ID,
 		ATMEL_AT45DB041D,
-		528, // device size in KiB
+		528,  // device size in KiB
 		264,  // page size in bytes
 		9,
 		{
